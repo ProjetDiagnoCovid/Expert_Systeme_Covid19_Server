@@ -10,47 +10,62 @@ import java.net.Socket;
 import java.util.List;
 
 
-public class HandlerServer {
+public class HandlerServer extends Thread{
+	
+	@Override
+	public void run() {
+		ServerSocket server_socket;
+		try {
+			server_socket = new ServerSocket(2030);
+			
+			System.out.println("ServerSocket awaiting connections...");
+
+			while(true)
+			{
+				Socket socket = server_socket.accept();
+				System.out.println("Connection from " + socket + "!");
+
+				InputStream inputs = socket.getInputStream();
+				
+				ObjectInputStream objectinputs = new ObjectInputStream(inputs);
+				
+				Diagnostic diag =(Diagnostic) objectinputs.readObject();
+				
+				System.out.println("Received [" + diag.getSymptomes().size() + "] messages from: " + socket);
+				
+				System.out.println("All symptomes:");
+		        diag.getSymptomes().forEach((msg)-> System.out.println(msg));
+		        
+		        
+		        new DrlTest().Testing(diag);
+		        
+		        
+		        System.out.println("degré de contamination Convid19 : "+diag.getDegreCont_C19());
+		        
+		        /****** renvoyer le diagnostic au client ******/
+		        
+		        OutputStream os=socket.getOutputStream();
+				ObjectOutputStream oos=new ObjectOutputStream(os);
+				
+				oos.writeObject(diag);
+		        
+		        
+		        System.out.println("Closing sockets.");
+		        
+		       // server_socket.close();
+		        socket.close();
+			}
+		} catch (Exception e) {
+			
+			e.printStackTrace();
+		}
+		
+	
+	}
 
 	public static void main(String[] args) throws IOException, ClassNotFoundException {
-		ServerSocket server_socket = new ServerSocket(2030);
-		System.out.println("ServerSocket awaiting connections...");
-
-		Socket socket = server_socket.accept();
-		System.out.println("Connection from " + socket + "!");
-
-		
-		
-		InputStream inputs = socket.getInputStream();
-		
-		ObjectInputStream objectinputs = new ObjectInputStream(inputs);
-		
-		Diagnostic diag =(Diagnostic) objectinputs.readObject();
-		
-		System.out.println("Received [" + diag.getSymptomes().size() + "] messages from: " + socket);
-		
-		System.out.println("All symptomes:");
-        diag.getSymptomes().forEach((msg)-> System.out.println(msg));
-        
-        
-        new DrlTest().Testing(diag);
-        
-        
-        System.out.println("degré de contamination Convid19 : "+diag.getDegreCont_C19());
-        
-        /****** renvoyer le diagnostic au client ******/
-        
-        OutputStream os=socket.getOutputStream();
-		ObjectOutputStream oos=new ObjectOutputStream(os);
-		
-		oos.writeObject(diag);
-        
-        
-        System.out.println("Closing sockets.");
-        
-        server_socket.close();
-        socket.close();
-	
+		HandlerServer hserver = new HandlerServer();
+		hserver.start();
 
 	}
 }

@@ -7,11 +7,7 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/ProBook/Documents/for_dowloads/jar_files/mongo-java-driver-3.12.10.jar">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="con" path="DROOLS/Drools"/>
+	<classpathentry kind="lib" path="jarfiles/mongo-java-driver-3.12.10.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
